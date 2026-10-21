@@ -1,0 +1,10 @@
+{
+  "application": "fonts",
+  "directory": "fonts",
+  "packages": [
+    "nixe-fonts"
+  ],
+  "manifest": "Cargo.toml",
+  "prepare": [],
+  "binaries": []
+}
