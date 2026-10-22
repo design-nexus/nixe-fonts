@@ -30,7 +30,7 @@ colors from your Omarchy theme and fits a half-screen tile.
 ## Install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/design-nexus/nixe/main/install.sh | bash -s -- fonts
+curl -fsSL https://raw.githubusercontent.com/design-nexus/nixe-fonts/main/install.sh | bash -s -- fonts
 ```
 
 This installs GTK 4 if it's missing, builds with Cargo, and installs `nixe-fonts` to
