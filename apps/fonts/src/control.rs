@@ -1,9 +1,9 @@
-//! Fonts' tools on the control interface (`nixe_core::control`), for Nixe Assistant: what's
+//! Fonts' tools on the control interface (`nyx_core::control`), for Nyx Assistant: what's
 //! installed, search Google Fonts and Nerd Fonts, and install one. Nothing is removed.
 
 use crate::catalog::{self, FontEntry, Source};
 use crate::{install, installed, system};
-use nixe_core::control::text;
+use nyx_core::control::text;
 use serde_json::{json, Value};
 
 pub fn tools() -> Value {

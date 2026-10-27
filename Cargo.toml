@@ -6,7 +6,7 @@ members = ["apps/fonts"]
 edition = "2024"
 license = "MIT"
 authors = ["Ken Smith"]
-repository = "https://github.com/design-nexus/nixe-fonts"
+repository = "https://github.com/design-nexus/nyx-fonts"
 
 [profile.release]
 lto = "thin"

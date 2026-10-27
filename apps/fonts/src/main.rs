@@ -24,9 +24,9 @@ use gtk::prelude::*;
 use gtk::{gio, glib};
 use std::cell::Cell;
 
-pub const APP_ID: &str = "io.github.design_nexus.nixe.Fonts";
+pub const APP_ID: &str = "io.github.design_nexus.nyx.Fonts";
 
-const USAGE: &str = "Usage: nixe-fonts [OPTIONS]\n\
+const USAGE: &str = "Usage: nyx-fonts [OPTIONS]\n\
 \n\
   --section ID    open (or switch the open window) to a page: google, nerd, installed,\n\
                   system, settings\n\
@@ -46,8 +46,8 @@ fn start() {
 }
 
 fn main() -> glib::ExitCode {
-    nixe_core::app::init(nixe_core::app::App { slug: "nixe-fonts", name: "Fonts" });
-    nixe_core::migrate::from(&["nexus-fonts"]);
+    nyx_core::app::init(nyx_core::app::App { slug: "nyx-fonts", name: "Fonts" });
+    nyx_core::migrate::from(&["nexus-fonts"]);
     installed::move_old_fonts();
     let args: Vec<String> = std::env::args().collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
@@ -63,8 +63,8 @@ fn main() -> glib::ExitCode {
     }
 
     let app = gtk::Application::builder().application_id(APP_ID).flags(gio::ApplicationFlags::HANDLES_COMMAND_LINE).build();
-    // Nixe Assistant searches and installs fonts through this (primary instance only).
-    app.connect_startup(|app| nixe_core::control::serve(app, control::tools(), control::handle));
+    // Nyx Assistant searches and installs fonts through this (primary instance only).
+    app.connect_startup(|app| nyx_core::control::serve(app, control::tools(), control::handle));
     app.connect_command_line(|app, cl| {
         let argv: Vec<String> = cl.arguments().iter().map(|a| a.to_string_lossy().to_string()).collect();
         let has = |flag: &str| argv.iter().any(|a| a == flag);

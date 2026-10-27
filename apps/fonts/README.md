@@ -16,7 +16,7 @@ colors from your Omarchy theme and fits a half-screen tile.
 - **Live preview:** select a font to see your sample text in it at any size, with the
   full alphabet and numbers. Nothing is installed to preview a font: one file is
   downloaded to a cache.
-- **Install for your user:** fonts go to `~/.local/share/fonts/nixe-fonts`, no sudo
+- **Install for your user:** fonts go to `~/.local/share/fonts/nyx-fonts`, no sudo
   needed, and the font cache is refreshed so other apps see them right away. Choose
   static or variable files for Google Fonts, and which Nerd Font variants to keep
   (Mono for terminals, regular and Propo).
@@ -30,10 +30,10 @@ colors from your Omarchy theme and fits a half-screen tile.
 ## Install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/design-nexus/nixe-fonts/main/install.sh | bash -s -- fonts
+curl -fsSL https://raw.githubusercontent.com/design-nexus/nyx-fonts/main/install.sh | bash -s -- fonts
 ```
 
-This installs GTK 4 if it's missing, builds with Cargo, and installs `nixe-fonts` to
+This installs GTK 4 if it's missing, builds with Cargo, and installs `nyx-fonts` to
 `~/.local/bin` along with a launcher entry.
 
 To remove it, run the same line with `uninstall.sh` in place of `install.sh`. Fonts you
@@ -42,7 +42,7 @@ installed stay installed; add `-s -- --purge` to also remove them and the app's 
 ## Usage
 
 ```
-nixe-fonts [OPTIONS]
+nyx-fonts [OPTIONS]
 ```
 
 | Option | What |
@@ -67,11 +67,11 @@ nixe-fonts [OPTIONS]
 
 | Path | What |
 | --- | --- |
-| `~/.local/share/fonts/nixe-fonts/` | Installed fonts, one folder per family |
-| `~/.local/state/nixe-fonts/installed.toml` | What was installed, from where, and which version |
-| `~/.config/nixe-fonts/settings.toml` | Preferences: install options, preview, theme |
-| `~/.config/nixe-fonts/themes/*.toml` | Your own themes |
-| `~/.cache/nixe-fonts/` | The font lists and preview files |
+| `~/.local/share/fonts/nyx-fonts/` | Installed fonts, one folder per family |
+| `~/.local/state/nyx-fonts/installed.toml` | What was installed, from where, and which version |
+| `~/.config/nyx-fonts/settings.toml` | Preferences: install options, preview, theme |
+| `~/.config/nyx-fonts/themes/*.toml` | Your own themes |
+| `~/.cache/nyx-fonts/` | The font lists and preview files |
 
 ## License
 

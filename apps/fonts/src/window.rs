@@ -6,7 +6,7 @@ use crate::sections::{self, Section};
 use crate::widgets;
 use crate::{catalog, cmd, events, fmt, install, installed, paths, prefs, settings_dialog, theme};
 use gtk::prelude::*;
-use nixe_ui::chrome;
+use nyx_ui::chrome;
 use gtk::{gdk, glib};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -49,7 +49,7 @@ pub fn present(app: &gtk::Application, section: Option<&str>) {
     theme::install();
     install_icons();
     build(app);
-    let start = section.map(String::from).unwrap_or_else(|| nixe_theme::start_page("google", &prefs::get().last_section));
+    let start = section.map(String::from).unwrap_or_else(|| nyx_theme::start_page("google", &prefs::get().last_section));
     navigate(&start);
     // Developer aid: FONTS_SNAPSHOT=/path.png renders the window to a PNG
     // (invisibly) and quits, so layouts can be checked without a visible window.
@@ -120,8 +120,8 @@ fn build(app: &gtk::Application) {
     window.add_css_class("fonts-window");
     // No client-side titlebar: Hyprland manages the window.
     window.set_titlebar(Some(&gtk::Box::new(gtk::Orientation::Horizontal, 0)));
-    nixe_ui::keys::install(&window, nixe_ui::keys::Common::default());
-    window.set_icon_name(Some("io.github.design_nexus.nixe.Fonts"));
+    nyx_ui::keys::install(&window, nyx_ui::keys::Common::default());
+    window.set_icon_name(Some("io.github.design_nexus.nyx.Fonts"));
 
     let sections = sections::all();
 
@@ -666,7 +666,7 @@ fn page_title(sections: &[Section], id: &str) -> String {
 /// Show a short message at the bottom of the window.
 pub fn toast(message: &str) {
     let Some(ui) = ui() else {
-        eprintln!("nixe-fonts: {message}");
+        eprintln!("nyx-fonts: {message}");
         return;
     };
     let overlay = ui.borrow().overlay.clone();
@@ -747,7 +747,7 @@ pub fn search(query: &str) {
 }
 
 /// Font files dropped on the window are installed for this user: copied into
-/// `~/.local/share/fonts/nixe-fonts/local`, then the font cache is refreshed.
+/// `~/.local/share/fonts/nyx-fonts/local`, then the font cache is refreshed.
 fn accept_font_drops(window: &gtk::ApplicationWindow) {
     let drop = gtk::DropTarget::new(gdk::FileList::static_type(), gdk::DragAction::COPY);
     drop.connect_drop(|_, value, _, _| {
