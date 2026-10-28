@@ -1,6 +1,7 @@
-//! The main window: a top bar (sidebar toggle, where you are, search and
-//! settings), the navigation sidebar, a stack of pages built the first time
-//! they're shown, and a status bar underneath.
+//! The main window: the header (the app and the page, the sidebar toggle; the search
+//! across both catalogs in the middle; what's installed or installing, and settings at
+//! the end), the navigation sidebar and a stack of pages built the first time they're
+//! shown.
 
 use crate::sections::{self, Section};
 use crate::widgets;
@@ -26,6 +27,9 @@ struct Ui {
     /// Pages visited, for Back.
     history: Vec<String>,
     overlay: gtk::Overlay,
+    header: chrome::AppHeader,
+    /// The catalogs and installs, at the header's end.
+    readout: gtk::Label,
 }
 
 thread_local! {
@@ -51,12 +55,6 @@ pub fn present(app: &gtk::Application, section: Option<&str>) {
     build(app);
     let start = section.map(String::from).unwrap_or_else(|| nyx_theme::start_page("google", &prefs::get().last_section));
     navigate(&start);
-    // Developer aid: FONTS_SNAPSHOT=/path.png renders the window to a PNG
-    // (invisibly) and quits, so layouts can be checked without a visible window.
-    if let Some(out) = std::env::var_os("FONTS_SNAPSHOT") {
-        snapshot_and_quit(app, std::path::PathBuf::from(out));
-        return;
-    }
     if let Some(ui) = ui() {
         ui.borrow().window.present();
     }
@@ -116,7 +114,7 @@ fn nav_counts() -> Vec<(&'static str, String)> {
 
 fn build(app: &gtk::Application) {
     let window =
-        gtk::ApplicationWindow::builder().application(app).title("Fonts").default_width(1120).default_height(800).build();
+        gtk::ApplicationWindow::builder().application(app).title("Fonts").default_width(1280).default_height(800).build();
     window.add_css_class("fonts-window");
     // No client-side titlebar: Hyprland manages the window.
     window.set_titlebar(Some(&gtk::Box::new(gtk::Orientation::Horizontal, 0)));
@@ -171,9 +169,6 @@ fn build(app: &gtk::Application) {
         .vexpand(true)
         .child(&list)
         .build();
-    let head = chrome::sidebar_head("Fonts", Some("Search Google Fonts and Nerd Fonts (Ctrl+F)"));
-    head.toggle.connect_clicked(|_| toggle_sidebar());
-    nav.append(&head.root);
     nav.append(&nav_scroll);
 
     // ----- Content -----
@@ -184,21 +179,8 @@ fn build(app: &gtk::Application) {
     stack.set_transition_type(gtk::StackTransitionType::Crossfade);
     stack.set_transition_duration(if prefs::get().reduce_motion { 0 } else { 160 });
 
-    let search = search_entry();
-    if let Some(find) = &head.search {
-        let s = search.clone();
-        find.connect_clicked(move |_| {
-            if s.is_visible() && s.text().is_empty() {
-                s.set_visible(false);
-            } else {
-                s.set_visible(true);
-                s.grab_focus();
-            }
-        });
-    }
     let content = gtk::Box::new(gtk::Orientation::Vertical, 0);
     content.set_hexpand(true);
-    content.append(&chrome::search_strip(&search));
     content.append(&stack);
 
     let body = gtk::Box::new(gtk::Orientation::Horizontal, 0);
@@ -206,10 +188,24 @@ fn build(app: &gtk::Application) {
     body.append(&nav);
     body.append(&content);
 
+    // ----- Header -----
+    // The app and the page, the sidebar toggle; the search across both catalogs in the
+    // middle; what's installed or installing, and Settings at the end.
+    let header = chrome::app_header(&window, "font-x-generic-symbolic", "Fonts");
+    let collapse = widgets::bar_button("sidebar-show-symbolic", "Collapse the sidebar (Ctrl+B)");
+    collapse.connect_clicked(|_| toggle_sidebar());
+    header.start.append(&collapse);
+    let search = search_entry();
+    header.center.append(&search);
+    header.end.set_spacing(4);
+    let readout = library_readout();
+    header.end.append(&readout);
+    header.end.append(&chrome::settings_button(settings_dialog::open));
+
     let frame = gtk::Box::new(gtk::Orientation::Vertical, 0);
     frame.add_css_class("window-frame");
+    frame.append(&header.root);
     frame.append(&body);
-    frame.append(&status_bar());
 
     let overlay = gtk::Overlay::new();
     overlay.set_child(Some(&frame));
@@ -272,43 +268,34 @@ fn build(app: &gtk::Application) {
         before_search: String::new(),
         history: Vec::new(),
         overlay,
+        header,
+        readout,
     };
     UI.with(|u| *u.borrow_mut() = Some(Rc::new(RefCell::new(ui))));
 }
 
-/// The search: hidden until Ctrl+F or the sidebar's search button.
+/// The search's width in characters, in a full window and a narrow one.
+const SEARCH_WIDE: i32 = 30;
+const SEARCH_NARROW: i32 = 12;
+
+/// The search across both catalogs, always in the header (Ctrl+K).
 fn search_entry() -> gtk::SearchEntry {
     let search = gtk::SearchEntry::new();
-    search.set_placeholder_text(Some("Search both catalogs"));
-    search.set_visible(false);
+    search.set_placeholder_text(Some("Search both catalogs  (Ctrl+K)"));
+    search.add_css_class("bar-search");
+    search.set_width_chars(SEARCH_WIDE);
+    search.update_property(&[gtk::accessible::Property::Label("Search both catalogs")]);
     search.connect_search_changed(|e| on_search(&e.text()));
     search.connect_activate(|_| sections::search::focus_results());
-    search.connect_stop_search(|e| {
-        e.set_text("");
-        e.set_visible(false);
-    });
+    search.connect_stop_search(|e| e.set_text(""));
     search
 }
 
-/// The bar along the bottom: the shortcuts on the left, the library on the right.
-fn status_bar() -> gtk::Box {
-    let bar = gtk::Box::new(gtk::Orientation::Horizontal, 16);
-    bar.add_css_class("status-bar");
-    let help = gtk::Button::new();
-    help.add_css_class("status-help");
-    let content = gtk::Box::new(gtk::Orientation::Horizontal, 10);
-    content.append(&widgets::label("F1", "status-key"));
-    content.append(&widgets::label("Shortcuts", ""));
-    help.set_child(Some(&content));
-    help.set_tooltip_text(Some("Show the keyboard shortcuts"));
-    help.connect_clicked(|_| show_shortcuts());
-    bar.append(&help);
-    let spacer = gtk::Box::new(gtk::Orientation::Horizontal, 0);
-    spacer.set_hexpand(true);
-    bar.append(&spacer);
-    let readout = widgets::label("", "status-readout");
-    readout.set_ellipsize(gtk::pango::EllipsizeMode::Start);
-    bar.append(&readout);
+/// What's in the catalogs and installed, or the install under way.
+fn library_readout() -> gtk::Label {
+    let readout = widgets::label("", "header-status");
+    readout.set_ellipsize(gtk::pango::EllipsizeMode::End);
+    readout.set_margin_end(6);
     let refresh = {
         let readout = readout.clone();
         move || {
@@ -330,16 +317,12 @@ fn status_bar() -> gtk::Box {
     };
     refresh();
     events::subscribe(&readout, move |_| refresh());
-    bar.append(&chrome::gear(settings_dialog::open));
-    bar
+    readout
 }
 
 /// The sidebar shows only icons: hide the labels (everything marked
 /// `compact-hide`), show what's marked `compact-show`, centre the icons and the toggle.
 fn apply_compact(nav: &gtk::Box, compact: bool) {
-    if let Some(head) = nav.first_child().and_downcast::<gtk::Box>() {
-        chrome::set_head_compact(&head, compact);
-    }
     if compact {
         nav.add_css_class("compact");
     } else {
@@ -437,13 +420,11 @@ fn install_keys(window: &gtk::ApplicationWindow, search: &gtk::SearchEntry) {
                 if let Some(f) = page_filter() {
                     f.grab_focus();
                 } else {
-                    s2.set_visible(true);
                     s2.grab_focus();
                 }
                 done
             }
             gdk::Key::k if ctrl => {
-                s2.set_visible(true);
                 s2.grab_focus();
                 done
             }
@@ -479,9 +460,9 @@ fn install_keys(window: &gtk::ApplicationWindow, search: &gtk::SearchEntry) {
                 }
                 done
             }
-            gdk::Key::Escape if s2.is_visible() => {
+            gdk::Key::Escape if s2.has_focus() || !s2.text().is_empty() => {
                 s2.set_text("");
-                s2.set_visible(false);
+                gtk::prelude::GtkWindowExt::set_focus(&w2, None::<&gtk::Widget>);
                 done
             }
             _ => glib::Propagation::Proceed,
@@ -565,12 +546,17 @@ fn on_search(text: &str) {
     sections::search::set_query(&q);
 }
 
+/// Narrow windows (a tiled half-screen) mark their pages, and get a shorter search and
+/// no library counts in the header.
 fn set_narrow(narrow: bool) {
     NARROW.with(|n| n.set(narrow));
     let Some(ui) = ui() else { return };
-    for page in ui.borrow().pages.values() {
+    let u = ui.borrow();
+    for page in u.pages.values() {
         mark_page(page, narrow);
     }
+    u.search.set_width_chars(if narrow { SEARCH_NARROW } else { SEARCH_WIDE });
+    u.readout.set_visible(!narrow);
 }
 
 pub fn narrow() -> bool {
@@ -646,14 +632,15 @@ fn go(id: &str, record: bool) {
     }
     u.stack.set_visible_child_name(&id);
     u.current = id.clone();
-    chrome::set_title(&u.window, "Fonts", &page_title(&u.sections, &id));
+    let title = page_title(&u.sections, &id);
+    chrome::set_title(&u.window, "Fonts", &title);
+    u.header.set_subtitle(&title);
     let search = u.search.clone();
     drop(u);
     if id != "search" {
         if !search.text().is_empty() {
             ui.borrow_mut().before_search.clear();
             search.set_text("");
-            search.set_visible(false);
         }
         prefs::update(|p| p.last_section = id);
     }
@@ -706,43 +693,10 @@ pub fn window() -> Option<gtk::ApplicationWindow> {
     ui().map(|u| u.borrow().window.clone())
 }
 
-fn snapshot_and_quit(app: &gtk::Application, out: std::path::PathBuf) {
-    let Some(ui) = ui() else { return };
-    let window = ui.borrow().window.clone();
-    window.set_opacity(0.01);
-    // A distinct title lets a window rule float it at a set size for screenshots.
-    window.set_title(Some("Fonts snapshot"));
-    window.set_default_size(
-        std::env::var("FONTS_SNAPSHOT_W").ok().and_then(|v| v.parse().ok()).unwrap_or(1120),
-        std::env::var("FONTS_SNAPSHOT_H").ok().and_then(|v| v.parse().ok()).unwrap_or(800),
-    );
-    window.present();
-    let app = app.clone();
-    let delay: u64 = std::env::var("FONTS_SNAPSHOT_DELAY").ok().and_then(|v| v.parse().ok()).unwrap_or(2500);
-    glib::timeout_add_local_once(std::time::Duration::from_millis(delay), move || {
-        if let Some(child) = window.child() {
-            let paintable = gtk::WidgetPaintable::new(Some(&child));
-            let (w, h) = (child.width(), child.height());
-            let snapshot = gtk::Snapshot::new();
-            snapshot.append_color(&gdk::RGBA::BLACK, &gtk::graphene::Rect::new(0.0, 0.0, w as f32, h as f32));
-            paintable.snapshot(&snapshot, w as f64, h as f64);
-            if let (Some(node), Some(renderer)) = (snapshot.to_node(), window.renderer()) {
-                let texture = renderer.render_texture(node, None);
-                match texture.save_to_png(&out) {
-                    Ok(()) => println!("snapshot {w}x{h} -> {}", out.display()),
-                    Err(e) => eprintln!("snapshot failed: {e}"),
-                }
-            }
-        }
-        app.quit();
-    });
-}
-
 /// Search both catalogs from outside (`--search`).
 pub fn search(query: &str) {
     let Some(ui) = ui() else { return };
     let entry = ui.borrow().search.clone();
-    entry.set_visible(true);
     entry.set_text(query);
 }
 

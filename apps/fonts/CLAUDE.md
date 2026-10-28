@@ -1,11 +1,15 @@
 # Fonts — notes for working on this repo
 
-- GTK4 (gtk4-rs 0.11) + Rust. No libadwaita. Follows `STYLE.md`; the theme, widgets,
-  settings card and window frame come from the `nyx-*` crates. Every colour is a `@theme_*` token.
+- GTK4 (gtk4-rs 0.11) + Rust. No libadwaita. Nyx Design 2.0 (`use_design_2`, see
+  `STYLE.md`): one blended surface. The unified header shows the app and the page, the
+  sidebar toggle, the search across both catalogs (always there, Ctrl+K) in the middle,
+  and the catalog and install readout and Settings at the end; no status bar. The theme,
+  widgets, settings card and header come from the `nyx-*` crates. Every colour is a
+  `@theme_*` token.
 - Pages (`sections/`) all use `sections/browse.rs`: a toolbar (filter, optional chips row
   → `.list-toolbar.stacked`), a `FontTable` (`fonttable.rs`) and a `PreviewPanel` in a
-  vertical `Paned`. Ctrl+F focuses the visible page's `.page-search`; Ctrl+K the search strip
-  over the page (Search page, both catalogs), also opened from the sidebar's head.
+  vertical `Paned`. Ctrl+F focuses the visible page's `.page-search`; Ctrl+K the header's
+  search (the Search page, both catalogs).
 - Catalogs (`catalog/`): Google `fonts.google.com/metadata/fonts` (popularity/trending
   are ranks, lower = more popular) and the download manifest
   `fonts.google.com/download/list?family=` (strip `)]}'`). Nerd Fonts: `fonts.json` in the
@@ -24,5 +28,6 @@
 - Control (`src/control.rs`): `nyx_core::control` on the app's bus name, for Nyx Assistant: `fonts.installed`, `search`, `install` (never removes).
 - Checks: `cargo clippy --all-targets -- -D warnings`, `cargo test`. The network
   install test: `cargo test -- --ignored installs_and_removes` (scratch XDG dirs).
-  Visual check: `FONTS_SNAPSHOT=/tmp/x.png fonts --section nerd` (quit a running
-  instance first; it's single-instance).
+  Visual check: run a test copy with `NYX_FONTS_APP_ID=io.github.design_nexus.nyx.FontsTest`
+  (a separate instance) and scratch XDG dirs on a private headless output, never on the
+  desktop, and capture it with `grim -o`.

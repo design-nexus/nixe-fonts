@@ -1,440 +1,94 @@
-.settings-navigation.compact button.nav-item {
-  min-width: 40px;
-  padding: 0;
-}
+/* Fonts on Nyx 2.0: only Fonts' own parts. One surface: the toolbar, the table and
+   the preview share the window's background; spacing, not lines, separates them.
+   Buttons, inputs, chips, tags and the header come from the shared sheets. */
 
-.settings-navigation button.nav-item {
-  min-height: 42px;
-  padding: 0 12px;
-  margin: 1px 0;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  color: @theme_text;
-  font-weight: 500;
-  transition: background 150ms ease-out, color 150ms ease-out;
-}
+/* ---------- Header and sidebar ---------- */
 
-.settings-navigation button.nav-item:hover {
-  background: @row_hover;
-}
-
-.settings-navigation button.nav-item.active {
-  background: @nav_active;
-  box-shadow: none;
-}
-
-/* ---------- Search ---------- */
-
-entry.settings-search,
-searchbar entry,
-entry.settings-search > text {
-  min-height: 36px;
-}
-
-/* ---------- Buttons ---------- */
-
-window.fonts-window button {
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid @hairline;
-  box-shadow: none;
-  color: @theme_text;
-  transition: background 150ms ease-out, border-color 150ms ease-out;
-}
-
-window.fonts-window button:hover {
-  background: @row_hover;
-}
-
-window.fonts-window button:active {
-  background: alpha(@theme_accent, 0.22);
-}
-
-window.fonts-window button.suggested-action {
-  background: @nav_active;
-  border-color: transparent;
-  color: @theme_text;
-  font-weight: 600;
-}
-
-window.fonts-window button.suggested-action image {
-  color: @theme_accent;
-}
-
-window.fonts-window button.suggested-action:hover {
-  background: mix(@theme_bg, @theme_accent, 0.26);
-}
-
-window.fonts-window button.destructive-action {
-  background: alpha(@theme_danger, 0.12);
-  border-color: alpha(@theme_danger, 0.55);
-  color: @theme_danger;
-}
-
-window.fonts-window button.flat {
-  background: transparent;
-  border-color: transparent;
-}
-
-window.fonts-window button.flat:hover {
-  background: @row_hover;
-}
-
-window.fonts-window button.reset-button {
-  min-height: 26px;
-  min-width: 26px;
-  padding: 0;
-  border-radius: 999px;
-  color: @theme_dim_text;
-}
-
-window.fonts-window button.chip {
-  min-height: 28px;
-  padding: 0 12px;
-  border-radius: 6px;
-  font-size: 0.9em;
-}
-
-window.fonts-window button.chip.selected {
-  background: @nav_active;
-  border-color: transparent;
-  color: @theme_text;
-}
-
-/* ---------- Inputs ---------- */
-
-window.fonts-window entry,
-window.fonts-window spinbutton {
-  min-height: 32px;
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid @hairline;
-  box-shadow: none;
-  color: @theme_text;
-}
-
-window.fonts-window entry:focus-within,
-window.fonts-window spinbutton:focus-within {
-  border-color: @theme_accent;
-  box-shadow: none;
-}
-
-window.fonts-window dropdown > button {
-  min-width: 160px;
-}
-
-/* Buttons on a banner are its action: a solid accent, so they stand out on the tint. */
-window.fonts-window .banner button {
-  background: @theme_accent;
-  border-color: @theme_accent;
-  color: @theme_on_accent;
-  font-weight: 600;
-}
-
-window.fonts-window .banner button:hover {
-  background: mix(@theme_accent, @theme_text, 0.12);
-}
-
-window.fonts-window .banner.warning button {
-  background: @theme_danger;
-  border-color: @theme_danger;
-}
-
-window.fonts-window .banner.warning button:hover {
-  background: mix(@theme_danger, @theme_text, 0.12);
-}
-
-window.fonts-window button.toast-action {
-  min-height: 28px;
-  margin: -4px -8px -4px 0;
-  padding: 0 12px;
-  font-weight: 700;
-  color: @theme_accent;
-}
-
-window.fonts-window button.toast-action:hover {
-  background: alpha(@theme_accent, 0.14);
-}
-
-/* ---------- Tags ---------- */
-
-.tag {
-  font-size: 0.72em;
-  font-weight: 700;
-  padding: 1px 8px;
-  border-radius: 4px;
-  background: alpha(@theme_muted, 0.55);
-  color: @theme_dim_text;
-}
-
-.tag.accent {
-  background: alpha(@theme_accent, 0.18);
-  color: @theme_text;
-}
-
-.tag.danger {
-  background: alpha(@theme_danger, 0.14);
-  color: @theme_danger;
-}
-
-/* ---------- Tables ---------- */
-
-/* A page's toolbar sits on a hairline above its table. */
-.toolbar,
-.list-toolbar {
-  min-height: 46px;
-  margin: 0;
-  padding: 0 12px 0 14px;
-  background: transparent;
-  border-bottom: 1px solid @hairline;
-}
-
-/* A line of help above a list, on the same hairline as a toolbar. */
-.page-hint {
-  padding: 12px 14px;
-  border-bottom: 1px solid @hairline;
-  color: @theme_dim_text;
-}
-
-.library-stack {
-  margin-top: 0;
-}
-
-window.fonts-window columnview > header > button {
-  min-height: 34px;
-  padding: 0 16px;
-  border-radius: 0;
-  border: none;
-  border-left: 1px solid @hairline;
-  background: transparent;
-  color: @theme_dim_text;
-}
-
-window.fonts-window columnview > header > button:first-child {
-  border-left: none;
-}
-
-window.fonts-window columnview > header,
-window.fonts-window columnview > header > button,
-window.fonts-window columnview > header > button > box {
-  font-size: 1em;
-}
-
-window.fonts-window columnview > header > button > box > label {
-  font-size: 0.86em;
-  font-weight: 500;
-  color: @theme_dim_text;
-}
-
-window.fonts-window columnview > header > button:hover {
-  background: @row_hover;
-  color: @theme_text;
-}
-
-.cell-dim {
-  color: @theme_dim_text;
-}
-
-window.fonts-window list.table-card {
-  background: transparent;
-  color: @theme_text;
-}
-
-window.fonts-window list.table-card > row {
-  border-radius: 0;
-  margin: 0;
-}
-
-window.fonts-window list.table-card > row:hover {
-  background: @row_hover;
-}
-
-window.fonts-window list.table-card > row:selected {
-  background: @nav_active;
-  box-shadow: none;
-}
-
-window.fonts-window .segmented button.segment {
-  min-height: 28px;
-  padding: 0 12px;
-  border: none;
-  border-radius: 5px;
-  background: transparent;
-  color: alpha(@theme_text, 0.78);
-  font-weight: 600;
-  box-shadow: none;
-}
-
-window.fonts-window .segmented button.segment:hover {
-  background: @row_hover;
-  color: @theme_text;
-}
-
-window.fonts-window .segmented button.segment:checked {
-  background: @nav_active;
-  color: @theme_text;
-}
-
-window.fonts-window button.icon-button {
-  min-width: 30px;
-  min-height: 30px;
-  padding: 0;
-  border-radius: 6px;
-  border-color: transparent;
-  color: @theme_dim_text;
-}
-
-window.fonts-window button.icon-button:hover {
-  color: @theme_text;
-}
-
-window.fonts-window button.icon-button:disabled {
-  opacity: 0.4;
-}
-
-/* ---------- Detail views ---------- */
-
-window.fonts-window button.back-button {
-  margin: 0 0 10px -8px;
-  color: @theme_dim_text;
-}
-
-window.fonts-window button.back-button:hover {
-  color: @theme_text;
-}
-
-.detail-header {
-  margin-bottom: 18px;
-}
-
-.detail-title {
-  font-size: 1.9em;
-  font-weight: 800;
-}
-
-.detail-meta {
-  font-size: 0.86em;
-}
-
-window.fonts-window button.link-button {
-  padding: 0 6px;
-  margin-left: -6px;
-  min-height: 26px;
-  font-weight: 600;
-  color: @theme_accent;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-}
-
-window.fonts-window button.link-button:hover {
-  background: alpha(@theme_accent, 0.12);
-}
-
-window.fonts-window button.link-button:disabled {
-  color: @theme_dim_text;
-}
-
-.empty-title {
-  font-size: 1.2em;
-  font-weight: 800;
-  color: @theme_text;
-}
-
-window.fonts-window button.menu-item {
-  min-height: 30px;
-  padding: 0 10px;
-  border-radius: 5px;
-  font-weight: 500;
-}
-
-window.fonts-window button.menu-item:hover {
-  background: alpha(@theme_accent, 0.18);
-}
-
-window.fonts-window entry.error {
-  border-color: @theme_danger;
-}
-
-entry.page-search {
-  margin: 0;
-}
-
-.field-label {
-  font-weight: 600;
-  font-size: 0.92em;
-  color: @theme_dim_text;
-}
-
-window.fonts-window popover.search-popover > contents {
-  padding: 6px;
-}
-
-window.fonts-window popover.search-popover entry.settings-search {
-  margin: 0;
-}
-
-window.fonts-window columnview > listview > header {
-  background: transparent;
-}
-
-window.fonts-window button.dialog-nav {
-  min-height: 0;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-}
-
-window.fonts-window button.dialog-nav image {
-  margin-top: 2px;
-  color: @theme_dim_text;
-}
-
-window.fonts-window button.dialog-nav:hover {
-  background: @row_hover;
-}
-
-window.fonts-window button.dialog-nav.active {
-  background: @lift_active;
-}
-
-window.fonts-window button.dialog-nav.active image {
-  color: @theme_accent;
-}
-
-/* ---------- Fonts ---------- */
-
-.settings-navigation .nav-count {
-  font-size: 0.86em;
+.header-status {
+  font-size: 11.5px;
   color: @theme_dim_text;
   font-feature-settings: "tnum";
 }
 
-/* A toolbar of two rows: the filter over the category chips. */
-.list-toolbar.stacked {
-  padding: 10px 12px 10px 14px;
+window.fonts-window .app-header button.bar-button {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: var(--nyx-radius-small);
+  box-shadow: none;
 }
 
-.list-toolbar.stacked > * {
-  margin-top: 0;
-  margin-bottom: 0;
+.settings-navigation .nav-count {
+  font-size: 11.5px;
+  color: @theme_text_tertiary;
+  font-feature-settings: "tnum";
+}
+
+/* ---------- Pages ---------- */
+
+/* A page's toolbar: the filter, and under it the category chips. */
+.list-toolbar {
+  min-height: 44px;
+  margin: 0;
+  padding: 6px 16px 6px 20px;
+  background: transparent;
+}
+
+.list-toolbar.stacked {
+  padding: 10px 16px 10px 20px;
 }
 
 .list-toolbar.stacked > .chip-row {
   margin-top: 10px;
 }
 
-/* The hairline between the table and the preview is the drag handle. */
-paned.browse-paned > separator {
-  min-height: 1px;
-  background: @hairline;
-  background-image: none;
+entry.page-search {
+  margin: 0;
 }
+
+/* ---------- The table ---------- */
+
+window.fonts-window columnview.font-table > header > button {
+  min-height: 32px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+window.fonts-window columnview.font-table > header > button > box > label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: @theme_text_tertiary;
+}
+
+window.fonts-window columnview.font-table > header > button:hover > box > label {
+  color: @theme_text;
+}
+
+window.fonts-window columnview > listview > header {
+  background: transparent;
+}
+
+.cell-dim {
+  color: @theme_dim_text;
+}
+
+/* Blended: the table and the preview meet without a line (the divider still drags). */
+window.fonts-window paned.browse-paned > separator {
+  min-height: 6px;
+  background: @theme_bg;
+  background-image: none;
+  border: none;
+  box-shadow: none;
+}
+
+window.fonts-window paned.browse-paned > separator:hover {
+  background: alpha(@theme_accent, 0.25);
+}
+
+/* ---------- The preview ---------- */
 
 .preview-content {
   padding: 14px 24px 16px;
@@ -445,26 +99,27 @@ paned.browse-paned > separator {
 }
 
 .preview-title {
-  font-size: 1.2em;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .preview-detail {
-  font-size: 0.88em;
+  font-size: 12px;
   font-weight: 400;
   color: @theme_dim_text;
 }
 
 .preview-progress {
-  font-size: 0.86em;
+  font-size: 12px;
   color: @theme_accent;
+  font-feature-settings: "tnum";
 }
 
 .preview-fonts {
   padding-top: 6px;
 }
 
-/* Drawn in the previewed font, so the window's monospace and weight don't apply. */
+/* Drawn in the previewed font, so the window's font and weight don't apply. */
 .preview-text {
   font-family: sans-serif;
   font-weight: 400;

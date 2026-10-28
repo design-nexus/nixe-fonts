@@ -13,7 +13,7 @@ const GROUPS: &[(&str, &str, &str)] = &[
     ("Installing", "folder-download-symbolic", "Files, variants, font cache"),
     ("Preview", "font-x-generic-symbolic", "Preview cache"),
     ("Catalog", "view-refresh-symbolic", "Refresh the font lists"),
-    ("Fonts window", "applications-graphics-symbolic", "Theme, glow, motion"),
+    ("Fonts window", "applications-graphics-symbolic", "Theme, accent, motion"),
     ("Keyboard", "input-keyboard-symbolic", "Shortcuts"),
 ];
 
