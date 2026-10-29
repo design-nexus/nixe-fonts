@@ -10,6 +10,7 @@ use std::rc::Rc;
 pub enum Change {
     /// The font lists were loaded, refreshed or started loading.
     Catalog,
+    Preferences,
     /// A font was installed, updated or removed.
     Installed,
     /// The install queue moved on (progress, a job started or finished).

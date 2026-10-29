@@ -32,6 +32,11 @@ pub fn build(page: &Page) {
     b.set_entries(&catalog::google());
     let b2 = b.clone();
     events::subscribe(&b.toolbar, move |c| {
+        if c == events::Change::Preferences {
+            let sort = prefs::get().google_sort;
+            b2.table.set_sort(&sort);
+            dd.set_selected(SORTS.iter().position(|(id, _)| *id == sort).unwrap_or(0) as u32);
+        }
         if c == events::Change::Catalog {
             b2.set_entries(&catalog::google());
         }

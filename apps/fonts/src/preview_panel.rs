@@ -175,6 +175,13 @@ impl PreviewPanel {
         });
         let p = panel.clone();
         events::subscribe(&panel.root, move |c| {
+            if c == events::Change::Preferences {
+                let prefs = prefs::get();
+                entry.set_text(&prefs.sample);
+                scale.set_value(prefs.preview_size);
+                p.set_sample(&prefs.sample);
+                p.set_size(prefs.preview_size);
+            }
             if matches!(c, events::Change::Installed | events::Change::Jobs | events::Change::Catalog) {
                 p.refresh_actions();
             }

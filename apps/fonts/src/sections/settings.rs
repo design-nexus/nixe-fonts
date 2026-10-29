@@ -36,6 +36,18 @@ pub fn build(page: &Page) {
 
     // ----- Preview -----
     let g = page.group("Preview");
+    let sample = gtk::Entry::new();
+    sample.set_text(&p.sample);
+    sample.set_width_chars(18);
+    sample.connect_changed(|e| {
+        prefs::update(|p| p.sample = e.text().to_string());
+        events::emit(events::Change::Preferences);
+    });
+    g.add(&widgets::row("Preview text", "Sample shown when previewing a font.", Some(sample.upcast_ref())));
+    let size = gtk::SpinButton::with_range(8.0, 96.0, 1.0);
+    size.set_value(p.preview_size);
+    size.connect_value_changed(|s| { prefs::update(|p| p.preview_size = s.value()); events::emit(events::Change::Preferences); });
+    g.add(&widgets::row("Preview size", "Text size in points.", Some(size.upcast_ref())));
     let (r, _) = widgets::button_row("Clear the preview cache", "Delete downloaded preview files.", "Clear", |_| {
         let dir = paths::preview_dir();
         let size: u64 =
@@ -47,6 +59,10 @@ pub fn build(page: &Page) {
 
     // ----- Catalog -----
     let g = page.group("Catalog");
+    let (row, _) = widgets::choice_row("Sort Google Fonts by", "Default order for the font catalog.",
+        widgets::opts(&[("popular", "Popular"), ("trending", "Trending"), ("name", "Name"), ("newest", "Newest")]),
+        &p.google_sort, |id| { prefs::update(|p| p.google_sort = id); events::emit(events::Change::Preferences); });
+    g.add(&row);
     let (row, button) = widgets::button_row("Refresh the font lists", "", "Refresh now", |_| catalog::refresh());
     g.add(&row);
     let desc = row.first_child().and_then(|t| t.first_child()).and_then(|t| t.next_sibling()).and_downcast::<gtk::Label>();
